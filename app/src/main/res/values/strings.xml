@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">VoiceNotes</string>
+    <string name="sample_transcription">lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua…</string>
+    <string name="history">🕒 HISTORY</string>
+    <string name="cancel">Cancel</string>
+    <string name="translate">Translate</string>
+    <string name="_00_00">00:00</string>
+    <string name="note_content_placeholder">Note content…</string>
+    <string name="note_timestamp_placeholder">3 days ago</string>
+    <string name="note_title_placeholder">Note Title</string>
+    <string name="history_title">History</string>
+    <string name="title_text">VoiceNote</string>
 </resources>
