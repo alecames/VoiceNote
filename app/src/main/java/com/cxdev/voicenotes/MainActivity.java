@@ -2,8 +2,11 @@ package com.cxdev.voicenotes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Surface;
@@ -15,8 +18,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SpeechRecognizer speechRecognizer = new SpeechRecognizer();
 
-        // LISTENERS ------------------------------------
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        // LISTENERS -------------------------------------------------------//
         // listener for history button
         findViewById(R.id.history).setOnClickListener(v -> {
             // start history activity
@@ -25,9 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         // listener for record button
         findViewById(R.id.recordButton).setOnClickListener(v -> {
-            // toggle record button
-            v.setSelected(!v.isSelected());
-            Toast.makeText(this, v.isSelected() ? "Recording..." : "Stopped", Toast.LENGTH_SHORT).show();
+            // toggle recording
         });
 
         // listener for settings button
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show();
         });
 
-        // listner for timer
+        // listener for timer
         findViewById(R.id.timer).setOnClickListener(v -> {
             Toast.makeText(this, "Timer", Toast.LENGTH_SHORT).show();
         });

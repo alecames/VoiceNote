@@ -27,9 +27,24 @@
         android:text="@string/_00_00"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/recordButton"
+        app:layout_constraintBottom_toTopOf="@+id/circle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- insert the circle.xml drawable here -->
+    <ImageView
+        android:id="@+id/circle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/recordButton"
+        app:layout_constraintEnd_toEndOf="@+id/recordButton"
+        app:layout_constraintStart_toStartOf="@+id/recordButton"
+        app:layout_constraintTop_toTopOf="@+id/recordButton"
+        android:translationZ="2dp"
+        />
 
     <TextView
         android:id="@+id/transcription"
