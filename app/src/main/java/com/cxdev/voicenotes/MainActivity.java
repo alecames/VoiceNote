@@ -23,25 +23,23 @@ import java.time.Instant;
 public class MainActivity extends AppCompatActivity {
 
     MediaRecorder mediaRecorder = new MediaRecorder();
+    SpeechRecognizer speechRecognizer = new SpeechRecognizer();
     boolean isRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SpeechRecognizer speechRecognizer = new SpeechRecognizer();
-
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setOutputFile(getOutputFileName());
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        // LISTENERS -------------------------------------------------------//
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
+        mediaRecorder.setOutputFile(getOutputFileName());
+
         // listener for history button
         findViewById(R.id.history).setOnClickListener(v -> {
             // start history activity
@@ -69,14 +67,14 @@ public class MainActivity extends AppCompatActivity {
 
         // listener for right button
         findViewById(R.id.rightButton).setOnClickListener(v -> {
-//            Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show();
 
         });
 
 
         // listener for left button
         findViewById(R.id.leftButton).setOnClickListener(v -> {
-            Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Cancel", Toast.LENGTH_SHORT).show();
         });
 
         // listener for timer
