@@ -5,20 +5,37 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Surface;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.BreakIterator;
+import java.time.Instant;
+
 public class MainActivity extends AppCompatActivity {
+
+    MediaRecorder mediaRecorder = new MediaRecorder();
+    boolean isRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setOutputFile(getOutputFileName());
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -33,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
         // listener for record button
         findViewById(R.id.recordButton).setOnClickListener(v -> {
+            try {
+                toggleRecording(getOutputFileName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             // toggle recording
         });
 
@@ -47,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
         // listener for right button
         findViewById(R.id.rightButton).setOnClickListener(v -> {
-            Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Translate", Toast.LENGTH_SHORT).show()
+
         });
+
 
         // listener for left button
         findViewById(R.id.leftButton).setOnClickListener(v -> {
@@ -62,4 +86,30 @@ public class MainActivity extends AppCompatActivity {
 
         // ------------------------------------------------------------------------
     }
-}
+
+    private String getOutputFileName() {
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File audioFolder = new File(filePath, "MyAudioFolder");
+        audioFolder.mkdirs();
+        Instant currentTime = Instant.now();
+        long seconds = currentTime.getEpochSecond();
+        String cTime = Long.toString(seconds);
+        return new File(audioFolder, cTime + ".3gp").getAbsolutePath();
+    }
+    private void toggleRecording(String audioFilePath) throws IOException {
+        if (isRecording) {
+            // Stop recording and save the audio file
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            isRecording = false;
+        } else {
+            // Start recording audio
+            mediaRecorder = new MediaRecorder();
+            mediaRecorder.setOutputFile(audioFilePath);
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+            isRecording = true;
+        }
+    }
+ }
+
