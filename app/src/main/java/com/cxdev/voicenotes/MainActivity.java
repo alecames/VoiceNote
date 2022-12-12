@@ -180,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
 //        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".mp3";
 //    }
 
-
-
     // get output file name
 //    private String getOutputFileName() {
 //        String filePath = getFilesDir().getAbsolutePath();
