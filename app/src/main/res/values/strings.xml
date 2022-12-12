@@ -1,13 +1,29 @@
 <resources>
     <string name="app_name">VoiceNotes</string>
-    <string name="sample_transcription">lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua…</string>
+    <string name="sample_transcription">Transcription will appear here...</string>
     <string name="history">🕒 HISTORY</string>
     <string name="cancel">Cancel</string>
-    <string name="translate">Translate</string>
+    <string name="translate">Save</string>
     <string name="_00_00">00:00</string>
     <string name="note_content_placeholder">Note content…</string>
     <string name="note_timestamp_placeholder">3 days ago</string>
     <string name="note_title_placeholder">Note Title</string>
     <string name="history_title">History</string>
     <string name="title_text">VoiceNote</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

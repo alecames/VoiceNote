@@ -68,12 +68,13 @@ public class SpeechRecognizer {
         }
     }
 
-    private void startVoiceStreaming() {
+    void startVoiceStreaming() {
         isStreaming = true;
         streamExecutorService.submit(runnableAudioStream);
     }
 
-    private static final int sampleRate = 44000;
+
+    private static final int sampleRate = 44100;
     private static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
     private static final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private static int minBufferSize = 2200;
