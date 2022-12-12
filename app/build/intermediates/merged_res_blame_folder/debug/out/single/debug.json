@@ -1,0 +1,122 @@
+[
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_button_right.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/button_right.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_button_left.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/button_left.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_record_button_pressed.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/record_button_pressed.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/layout_activity_history.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/layout/activity_history.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_record_button.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/record_button.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_rounded_card.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/rounded_card.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/xml_root_preferences.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/xml/root_preferences.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/layout_settings_activity.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/layout/settings_activity.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_record_button_idle.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/record_button_idle.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_ic_mic.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/ic_mic.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_ic_settings.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/ic_settings.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/layout_title_dialog.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/layout/title_dialog.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/layout_activity_main.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/layout_note_item.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/layout/note_item.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/xml_data_extraction_rules.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_record_button_recording.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/record_button_recording.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/drawable_circle.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/drawable/circle.xml"
+    },
+    {
+        "merged": "com.cxdev.voicenotes.app-merged_res-30:/xml_backup_rules.xml.flat",
+        "source": "com.cxdev.voicenotes.app-main-32:/xml/backup_rules.xml"
+    }
+]

@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
                     // start recording
                     try {
                         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
+                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                         mediaRecorder.setOutputFile(getOutputFileName());
                         mediaRecorder.prepare();
                         mediaRecorder.start();
@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 onClickCalled = true;
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+
             }
         });
 
@@ -162,16 +163,26 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    // get the file name for the recording
+//     get the file name for the recording
     private String getOutputFileName() {
         File file = new File(getExternalFilesDir(null), "recordings");
         if (!file.exists()) {
             file.mkdirs();
         }
-        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".3gp";
+        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".mp3";
     }
 
-//    // get output file name
+//    private String getOutputFileName() {
+//        File file = new File(getFilesDir(), "recordings");
+//        if (!file.exists()) {
+//            file.mkdirs();
+//        }
+//        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".mp3";
+//    }
+
+
+
+    // get output file name
 //    private String getOutputFileName() {
 //        String filePath = getFilesDir().getAbsolutePath();
 //        //print file path
@@ -183,18 +194,26 @@ public class MainActivity extends AppCompatActivity {
 //        long seconds = currentTime.getEpochSecond();
 //        String cTime = Long.toString(seconds);
 //        System.out.println(filePath + ", " + cTime);
-//        return new File(audioFolder, cTime + ".3gp").getAbsolutePath();
+//        return new File(audioFolder, cTime + ".mp3").getAbsolutePath();
 //    }
 
     // toggle recording
     private void toggleRecording(String audioFilePath) throws IOException {
         if (isRecording) {
             // Stop recording and save the audio file
+            System.out.println("Stopping the recording");
             mediaRecorder.stop();
             mediaRecorder.release();
             isRecording = false;
+            File dir = new File(audioFilePath);
+            File[] files = dir.listFiles();
+            System.out.println("We've stopped recording");
+            for (File f : files) {
+                System.out.println(f.getName());
+            }
         } else {
             // Start recording audio
+            System.out.println("Starting recording");
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setOutputFile(audioFilePath);
             mediaRecorder.prepare();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.VoiceNotes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+
+
+        
+        <item name="colorPrimary">@color/grey</item>
+        <item name="colorPrimaryVariant">@color/light_grey</item>
+        <item name="colorOnPrimary">@color/white_text</item>
+        <item name="colorOnTertiary">@color/white_text_2</item>
+        
+        <item name="colorSecondary">@color/red  </item>
+        <item name="colorSecondaryVariant">@color/light_red</item>
+        <item name="colorOnSecondary">@color/white_text</item>
+        
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        
+    </style>
+</resources>
