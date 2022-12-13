@@ -29,7 +29,6 @@ public class SpeechRecognizer {
     private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT);
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
 
     private final AudioRecord audioRecord;
     private final SpeechClient speechClient;
@@ -37,8 +36,10 @@ public class SpeechRecognizer {
     public SpeechRecognizer(Context context) throws IOException {
 
         // TODO check if permission is granted
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((MainActivity) context, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        }
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
-
         speechClient = SpeechClient.create();
     }
 

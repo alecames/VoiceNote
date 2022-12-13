@@ -3,6 +3,8 @@ package com.cxdev.voicenotes;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
@@ -24,9 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
     MediaRecorder mediaRecorder;
     SpeechRecognizer speechRecognizer;
+    AudioRecord audioRecord;
     boolean isRecording = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
     private boolean permissionToRecordGranted = false;
+
+    private static final int SAMPLE_RATE = 44100;
+    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT);
 
     @Override
     protected void onStop() {
@@ -38,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mediaRecorder = new MediaRecorder();
+//        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
         // TODO: make this work
         try {
             speechRecognizer = new SpeechRecognizer(this);
