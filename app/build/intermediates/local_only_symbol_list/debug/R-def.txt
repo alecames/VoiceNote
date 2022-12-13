@@ -280,6 +280,7 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_mic
 drawable ic_settings
+drawable ic_stop
 drawable record_button
 drawable record_button_idle
 drawable record_button_pressed

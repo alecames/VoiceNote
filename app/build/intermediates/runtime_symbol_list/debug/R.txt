@@ -2901,6 +2901,7 @@ int drawable ic_mtrl_chip_checked_black 0x7f08008d
 int drawable ic_mtrl_chip_checked_circle 0x7f08008e
 int drawable ic_mtrl_chip_close_circle 0x7f08008f
 int drawable ic_settings 0x7f080090
+int drawable ic_stop 0x7f0800de
 int drawable m3_appbar_background 0x7f080091
 int drawable m3_popupmenu_background_overlay 0x7f080092
 int drawable m3_radiobutton_ripple 0x7f080093

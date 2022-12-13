@@ -4,7 +4,7 @@
             "outputFile": "com.cxdev.voicenotes.app-mergeDebugResources-28:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\034f511a629c0fda711794a09fef4382\\transformed\\appcompat-1.5.1\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\3ade45816145f649d0f4bdb28fc38544\\transformed\\appcompat-1.5.1\\res\\values-en-rXC\\values-en-rXC.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,24 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\87a796fe63836d99a2198ac6a6284cb3\\transformed\\core-1.8.0\\res\\values-en-rXC\\values-en-rXC.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "203",
-                        "endOffsets": "254"
-                    },
-                    "to": {
-                        "startLines": "31",
-                        "startColumns": "4",
-                        "startOffsets": "5901",
-                        "endColumns": "203",
-                        "endOffsets": "6100"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\b8fa8752cc88febe255fbbb89cd78d1b\\transformed\\preference-1.1.1\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\2bf643ce1e939b76490dc4a2bc933350\\transformed\\preference-1.1.1\\res\\values-en-rXC\\values-en-rXC.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -52,6 +35,23 @@
                         "startOffsets": "5528,6105,6406,6588",
                         "endColumns": "186,300,181,169",
                         "endOffsets": "5710,6401,6583,6753"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\c3123702808c55809f1bf02061c66277\\transformed\\core-1.8.0\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "203",
+                        "endOffsets": "254"
+                    },
+                    "to": {
+                        "startLines": "31",
+                        "startColumns": "4",
+                        "startOffsets": "5901",
+                        "endColumns": "203",
+                        "endOffsets": "6100"
                     }
                 }
             ]

@@ -23,24 +23,17 @@ public class MainActivity extends AppCompatActivity {
     MediaRecorder mediaRecorder = new MediaRecorder();
     SpeechRecognizer speechRecognizer = new SpeechRecognizer();
     boolean isRecording = false;
-    boolean onClickCalled = false;
 
     @Override
     protected void onStop() {
         super.onStop();
         speechRecognizer.stopVoiceStreaming();
-        onClickCalled = false;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioEncodingBitRate(16);
-
 
         // check for mic permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -78,12 +71,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (onClickCalled) {
-                    return;
-                }
-                onClickCalled = true;
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-
             }
         });
 
@@ -100,43 +88,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // trigger popup menu to enter title
-//                startActivity(new Intent(MainActivity.this, TitleActivity.class));
+                startActivity(new Intent(MainActivity.this, TitleDialogFragment.class));
             }
         });
     }
 
-    // starts the timer above the button
+    // start timer
     private void startTimer() {
+        long startTime = Instant.now().getEpochSecond();
+        TextView timer = findViewById(R.id.timer);
+        timer.setTextColor(getResources().getColor(R.color.red));
+        timer.setText("00:00");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int seconds = 0;
                 while (isRecording) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    seconds++;
-                    final int finalSeconds = seconds;
+                    long currentTime = Instant.now().getEpochSecond();
+                    long timeDifference = currentTime - startTime;
+                    long minutes = timeDifference / 60;
+                    long seconds = timeDifference % 60;
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // make text red
-                            ((TextView) findViewById(R.id.timer)).setTextColor(getResources().getColor(R.color.red));
-                            ((TextView) findViewById(R.id.timer)).setText(String.format(Locale.getDefault(), "%02d:%02d", finalSeconds / 60, finalSeconds % 60));
+                            timer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
                         }
                     });
+                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((TextView) findViewById(R.id.timer)).setTextColor(getResources().getColor(R.color.white));
-                    }
-                });
             }
         }).start();
     }
+
+    // stop timer
+    private void stopTimer() {
+        TextView timer = findViewById(R.id.timer);
+        timer.setTextColor(getResources().getColor(R.color.white));
+    }
+
 
 //     get the file name for the recording
     private String getOutputFileName() {
@@ -149,13 +138,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void startRecording() {
         if (!isRecording) {
-            // start recording
             try {
-                mediaRecorder.setOutputFile(getOutputFileName());
-                mediaRecorder.prepare();
-                mediaRecorder.start();
-                isRecording = true;
                 startTimer();
+                isRecording = true;
                 speechRecognizer.startVoiceStreaming();
                 ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0x80);
                 System.out.println("Recording started");
@@ -168,10 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopRecording() {
         if (isRecording) {
-            // stop recording
-            mediaRecorder.stop();
-            mediaRecorder.reset();
-            mediaRecorder.release();
+            stopTimer();
             isRecording = false;
             speechRecognizer.stopVoiceStreaming();
             ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0xFF);

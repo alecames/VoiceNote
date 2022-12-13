@@ -1,20 +1,18 @@
 package com.cxdev.voicenotes;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
-
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.RecognitionConfig;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1.SpeechSettings;
 import com.google.cloud.speech.v1.StreamingRecognitionConfig;
 import com.google.cloud.speech.v1.StreamingRecognitionResult;
 import com.google.cloud.speech.v1.StreamingRecognizeRequest;
@@ -22,10 +20,11 @@ import com.google.cloud.speech.v1.StreamingRecognizeResponse;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.protobuf.ByteString;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +34,13 @@ public class SpeechRecognizer {
     private MicListener micListener;
     private final ExecutorService streamExecutorService = Executors.newFixedThreadPool(1);
     private boolean isStreaming = false;
+    public long startTime = 0;
+    public long endTime = 0;
+
+    private static final int sampleRate = 22000;
+    private static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    private static final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+    private static int minBufferSize = 2200;
 
     public SpeechRecognizer() {
     }
@@ -64,7 +70,6 @@ public class SpeechRecognizer {
                     if (micListener != null) {
                         micListener.onVoiceStreaming(buffer);
                     }
-//                    Log.i("MinBufferSize : ", String.valueOf(buffer.length));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -78,6 +83,7 @@ public class SpeechRecognizer {
 
     public void stopVoiceStreaming() {
         isStreaming = false;
+        endTime = Instant.now().toEpochMilli();
         if (voiceRecorder != null) {
             voiceRecorder.release();
             voiceRecorder = null;
@@ -88,95 +94,93 @@ public class SpeechRecognizer {
     }
 
     void startVoiceStreaming() {
+        startTime = Instant.now().toEpochMilli();
         isStreaming = true;
         streamExecutorService.submit(runnableAudioStream);
     }
 
+    public static void streamingRecognizeFile(InputStream audioStream) throws Exception {
+        // create a new SpeechClient
+        try (SpeechClient speech = SpeechClient.create()){
+            // create a new streaming recognize request
+            StreamingRecognizeRequest request = StreamingRecognizeRequest.newBuilder()
+                    // set the recognition config
+                    .setStreamingConfig(StreamingRecognitionConfig.newBuilder()
+                            .setConfig(RecognitionConfig.newBuilder()
+                                    .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+                                    .setSampleRateHertz(sampleRate)
+                                    .setLanguageCode("en-US")
+                                    .build())
+                            .setInterimResults(true)
+                            .build())
+                    .build();
 
-    private static final int sampleRate = 44100;
-    private static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-    private static final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    private static int minBufferSize = 2200;
-
-    public static void streamingRecognizeFile(String fileName) throws Exception, IOException {
-        Path path = Paths.get(fileName);
-        byte[] data = Files.readAllBytes(path);
-
-        // Instantiates a client with GOOGLE_APPLICATION_CREDENTIALS
-        try (SpeechClient speech = SpeechClient.create()) {
-
-            // Configure request with local raw PCM audio
-            RecognitionConfig recConfig =
-                    RecognitionConfig.newBuilder()
-                            .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                            .setLanguageCode("en-US")
-                            .setSampleRateHertz(16000)
-                            .setModel("default")
-                            .build();
-            StreamingRecognitionConfig config =
-                    StreamingRecognitionConfig.newBuilder().setConfig(recConfig).build();
-
-            class ResponseApiStreamingObserver<T> implements ApiStreamObserver<T> {
-                private final SettableFuture<List<T>> future = SettableFuture.create();
-                private final List<T> messages = new java.util.ArrayList<T>();
-
-                @Override
-                public void onNext(T message) {
-                    messages.add(message);
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    future.setException(t);
-                }
-
-                @Override
-                public void onCompleted() {
-                    future.set(messages);
-                }
-
-                // Returns the SettableFuture object to get received messages / exceptions.
-                public SettableFuture<List<T>> future() {
-                    return future;
-                }
-            }
-
-            ResponseApiStreamingObserver<StreamingRecognizeResponse> responseObserver =
-                    new ResponseApiStreamingObserver<>();
-
+            // create a new BidiStreamingCallable for the SpeechClient
             BidiStreamingCallable<StreamingRecognizeRequest, StreamingRecognizeResponse> callable =
                     speech.streamingRecognizeCallable();
 
+            // create an ApiStreamObserver to handle the responses from the server
+            ApiStreamObserver<StreamingRecognizeResponse> responseObserver =
+                    new ApiStreamObserver<StreamingRecognizeResponse>() {
+                        @Override
+                        public void onNext(StreamingRecognizeResponse response) {
+                            // get the recognition results from the response
+                            List<StreamingRecognitionResult> results = response.getResultsList();
+
+                            // check if the response contains any recognition results
+                            if (!results.isEmpty()) {
+                                // get the first recognition result from the list
+                                StreamingRecognitionResult result = results.get(0);
+
+                                // check if the recognition result contains any alternatives
+                                if (!result.getAlternativesList().isEmpty()) {
+                                    // get the first alternative from the list
+                                    SpeechRecognitionAlternative alternative = result.getAlternatives(0);
+                                    // print the alternative transcript to the console
+                                    System.out.printf("Transcript: %s\n", alternative.getTranscript());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            System.out.println("Error: " + t.getMessage());
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            System.out.println("Completed");
+                        }
+                    };
+
+            // create a SettableFuture to handle the request
+            SettableFuture<Void> future = SettableFuture.create();
+
+            // send the requests to the server
             ApiStreamObserver<StreamingRecognizeRequest> requestObserver =
                     callable.bidiStreamingCall(responseObserver);
 
-            // The first request must **only** contain the audio configuration:
-            requestObserver.onNext(
-                    StreamingRecognizeRequest.newBuilder().setStreamingConfig(config).build());
+            // read the audio data from the input stream
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = audioStream.read(buffer)) != -1) {
+                // create a new chunk of audio data
+                ByteString audioData = ByteString.copyFrom(buffer, 0, len);
 
-            // Subsequent requests must **only** contain the audio data.
-            requestObserver.onNext(
-                    StreamingRecognizeRequest.newBuilder()
-                            .setAudioContent(ByteString.copyFrom(data))
-                            .build());
+                // add the chunk of audio data to the request
+                requestObserver.onNext(
+                        StreamingRecognizeRequest.newBuilder()
+                                .setAudioContent(audioData)
+                                .build());
+            }
 
-            // Mark transmission as completed after sending the data.
+            // indicate that the request is complete
             requestObserver.onCompleted();
 
-            List<StreamingRecognizeResponse> responses = responseObserver.future().get();
+            // wait for the response to complete
+            future.get();
 
-            for (StreamingRecognizeResponse response : responses) {
-                // For streaming recognize, the results list has one is_final result (if available) followed
-                // by a number of in-progress results (if iterim_results is true) for subsequent utterances.
-                // Just print the first result here.
-                StreamingRecognitionResult result = response.getResultsList().get(0);
-                // There can be several alternative transcripts for a given chunk of speech. Just use the
-                // first (most likely) one here.
-                SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-                System.out.printf("Transcript : %s\n", alternative.getTranscript());
-            }
         }
     }
-
 
 }

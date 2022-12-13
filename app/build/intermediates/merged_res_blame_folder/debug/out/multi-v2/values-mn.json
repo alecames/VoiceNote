@@ -4,7 +4,7 @@
             "outputFile": "com.cxdev.voicenotes.app-mergeDebugResources-28:/values-mn/values-mn.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\459731560744495d36c7572f4eaf1462\\transformed\\material-1.7.0\\res\\values-mn\\values-mn.xml",
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\07dfc6fd736155e73592826c2c3160ae\\transformed\\material-1.7.0\\res\\values-mn\\values-mn.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,24 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\b8fa8752cc88febe255fbbb89cd78d1b\\transformed\\preference-1.1.1\\res\\values-mn\\values-mn.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "105,175,265,344,482,651,736",
-                        "endColumns": "69,89,78,137,168,84,81",
-                        "endOffsets": "170,260,339,477,646,731,813"
-                    },
-                    "to": {
-                        "startLines": "37,39,91,93,96,97,98",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "3388,3523,7610,7773,8093,8262,8347",
-                        "endColumns": "69,89,78,137,168,84,81",
-                        "endOffsets": "3453,3608,7684,7906,8257,8342,8424"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\034f511a629c0fda711794a09fef4382\\transformed\\appcompat-1.5.1\\res\\values-mn\\values-mn.xml",
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\3ade45816145f649d0f4bdb28fc38544\\transformed\\appcompat-1.5.1\\res\\values-mn\\values-mn.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -57,7 +40,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\87a796fe63836d99a2198ac6a6284cb3\\transformed\\core-1.8.0\\res\\values-mn\\values-mn.xml",
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\2bf643ce1e939b76490dc4a2bc933350\\transformed\\preference-1.1.1\\res\\values-mn\\values-mn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "105,175,265,344,482,651,736",
+                        "endColumns": "69,89,78,137,168,84,81",
+                        "endOffsets": "170,260,339,477,646,731,813"
+                    },
+                    "to": {
+                        "startLines": "37,39,91,93,96,97,98",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "3388,3523,7610,7773,8093,8262,8347",
+                        "endColumns": "69,89,78,137,168,84,81",
+                        "endOffsets": "3453,3608,7684,7906,8257,8342,8424"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aleca\\.gradle\\caches\\transforms-3\\c3123702808c55809f1bf02061c66277\\transformed\\core-1.8.0\\res\\values-mn\\values-mn.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
