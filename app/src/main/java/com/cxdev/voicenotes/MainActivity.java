@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
-        // TODO: make this
+//        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
+
         try {
-            speechRecognizer = new SpeechRecognizer(this);
+            speechRecognizer = new SpeechRecognizer(this,this);
         } catch (IOException e) {
             e.printStackTrace();
         }
