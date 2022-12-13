@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +28,14 @@ public class HistoryActivity extends AppCompatActivity {
         noteHistory.setLayoutManager(new LinearLayoutManager(this));
         updateDB(db);
 
-        // LISTENERS -----------------------------------------------
-        // listeners for title (back button in this case)
-        findViewById(R.id.history_title).setOnClickListener(v -> {
-            finish();
+        // listener for title (back button in this case)
+        findViewById(R.id.history_title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
+
     }
 
     private void updateDB(NotesDBH db) {
