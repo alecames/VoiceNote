@@ -18,6 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
+*.json
 
 hs_err_pid*
 
@@ -27,3 +28,4 @@ local.properties
 .idea
 .gradle
 app/build
+app/src/main/res/raw

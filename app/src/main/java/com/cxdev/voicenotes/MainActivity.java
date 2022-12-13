@@ -1,20 +1,20 @@
 package com.cxdev.voicenotes;
 
-import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
-        // TODO: make this work
+
+        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
+        // TODO: make this
         try {
             speechRecognizer = new SpeechRecognizer(this);
         } catch (IOException e) {
@@ -96,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.rightButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // trigger popup menu to enter title
-                startActivity(new Intent(MainActivity.this, TitleDialogFragment.class));
+                showTitleDialog(MainActivity.this);
             }
         });
+
+
     }
 
     // start timer
@@ -132,6 +134,47 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private void showTitleDialog(Context context) {
+        // Create a new AlertDialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        // Set the title of the dialog
+        builder.setTitle("Enter a Title");
+
+        // Create an EditText view to get user input
+        final EditText input = new EditText(context);
+
+        // Set the EditText view as the content of the dialog
+        builder.setView(input);
+
+        // Add a button to save the user's input
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Get the user's input from the EditText view
+                String title = input.getText().toString();
+
+                // Do something with the user's input
+                // ...
+            }
+        });
+
+        // Add a button to cancel the dialog
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Cancel the dialog
+                dialog.cancel();
+            }
+        });
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
 
     // stop timer
     private void stopTimer() {
