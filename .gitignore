@@ -25,5 +25,6 @@ hs_err_pid*
 
 # android shit
 local.properties
+.idea
 .gradle
 app/build
