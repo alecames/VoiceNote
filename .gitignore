@@ -20,8 +20,9 @@
 *.rar
 
 hs_err_pid*
-
+*.json
 # android shit
 local.properties
 .gradle
 app/build
+.idea
