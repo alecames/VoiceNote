@@ -21,7 +21,9 @@
 
 hs_err_pid*
 
+.idea/workspace.xml
+
 # android shit
-local.properties/
-.gradle/
-app/build/
+local.properties
+.gradle
+app/build

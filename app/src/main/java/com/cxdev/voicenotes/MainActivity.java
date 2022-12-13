@@ -12,37 +12,38 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Locale;
 
+
 public class MainActivity extends AppCompatActivity {
 
-    MediaRecorder mediaRecorder = new MediaRecorder();
-    SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+    MediaRecorder mediaRecorder;
+    SpeechRecognizer speechRecognizer;
     boolean isRecording = false;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
+    private boolean permissionToRecordGranted = false;
 
     @Override
     protected void onStop() {
         super.onStop();
-        speechRecognizer.stopVoiceStreaming();
+        speechRecognizer.close();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // check for mic permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-        }
-
-        // check for storage permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
+        mediaRecorder = new MediaRecorder();
+        // TODO: make this work
+        try {
+            speechRecognizer = new SpeechRecognizer(this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // listener for history button
@@ -114,7 +115,11 @@ public class MainActivity extends AppCompatActivity {
                             timer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
                         }
                     });
-                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }).start();
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//     get the file name for the recording
+    //     get the file name for the recording
     private String getOutputFileName() {
         File file = new File(getExternalFilesDir(null), "recordings");
         if (!file.exists()) {
@@ -141,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 startTimer();
                 isRecording = true;
-                speechRecognizer.startVoiceStreaming();
+                TextView transcription = findViewById(R.id.transcription);
+                transcription.setText(speechRecognizer.recognizeSpeech());
                 ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0x80);
                 System.out.println("Recording started");
                 ((TextView) findViewById(R.id.transcription)).setText("Recording...");
@@ -155,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         if (isRecording) {
             stopTimer();
             isRecording = false;
-            speechRecognizer.stopVoiceStreaming();
+            speechRecognizer.close();
             ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0xFF);
             ((TextView) findViewById(R.id.transcription)).setText("Stopped recording...");
         }
