@@ -1,15 +1,19 @@
 package com.cxdev.voicenotes;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -22,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
     MediaRecorder mediaRecorder = new MediaRecorder();
     SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+    NotesDBH db = new NotesDBH(MainActivity.this);
     boolean isRecording = false;
-    boolean onClickCalled = false;
 
     @Override
     protected void onStop() {
         super.onStop();
         speechRecognizer.stopVoiceStreaming();
-        onClickCalled = false;
     }
 
     @Override
@@ -78,12 +81,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (onClickCalled) {
-                    return;
-                }
-                onClickCalled = true;
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-
             }
         });
 
@@ -91,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.leftButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Left", Toast.LENGTH_SHORT).show();
+                cancel();
             }
         });
 
@@ -99,66 +97,106 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.rightButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // trigger popup menu to enter title
-//                startActivity(new Intent(MainActivity.this, TitleActivity.class));
+                if (isRecording) {
+                    stopRecording();
+                }
+                showTitleDialog(MainActivity.this);
             }
         });
     }
 
-    // starts the timer above the button
+    private void cancel() {
+        stopRecording();
+    }
+
+    // start timer
     private void startTimer() {
+        long startTime = Instant.now().getEpochSecond();
+        TextView timer = findViewById(R.id.timer);
+        timer.setTextColor(getResources().getColor(R.color.red));
+        timer.setText("00:00");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int seconds = 0;
                 while (isRecording) {
+                    long currentTime = Instant.now().getEpochSecond();
+                    long timeDifference = currentTime - startTime;
+                    long minutes = timeDifference / 60;
+                    long seconds = timeDifference % 60;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            timer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+                        }
+                    });
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    seconds++;
-                    final int finalSeconds = seconds;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // make text red
-                            ((TextView) findViewById(R.id.timer)).setTextColor(getResources().getColor(R.color.red));
-                            ((TextView) findViewById(R.id.timer)).setText(String.format(Locale.getDefault(), "%02d:%02d", finalSeconds / 60, finalSeconds % 60));
-                        }
-                    });
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((TextView) findViewById(R.id.timer)).setTextColor(getResources().getColor(R.color.white));
-                    }
-                });
             }
         }).start();
     }
 
-//     get the file name for the recording
-    private String getOutputFileName() {
-        File file = new File(getExternalFilesDir(null), "recordings");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".mp3";
+    // stop timer
+    private void stopTimer() {
+        TextView timer = findViewById(R.id.timer);
+        timer.setTextColor(getResources().getColor(R.color.white));
+    }
+
+    // title window
+    private void showTitleDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Enter a Title");
+        final EditText input = new EditText(context);
+        builder.setView(input);
+
+        // add button to save the user input
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = input.getText().toString();
+
+                // get text from textview
+                TextView textView = findViewById(R.id.transcription);
+                String noteContent = textView.getText().toString();
+                if (!title.isEmpty()) {
+                    db.addNote( new Note(db.getNotesCount(),
+                            title,
+                            noteContent,
+                            Instant.now().toString()));
+                    Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter a title", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Add a button to cancel the dialog
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Cancel the dialog
+                dialog.cancel();
+            }
+        });
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
     private void startRecording() {
         if (!isRecording) {
             // start recording
             try {
-                mediaRecorder.setOutputFile(getOutputFileName());
-                mediaRecorder.prepare();
-                mediaRecorder.start();
-                isRecording = true;
                 startTimer();
+                isRecording = true;
                 speechRecognizer.startVoiceStreaming();
-                ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0x80);
-                System.out.println("Recording started");
+                ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button_recording);
                 ((TextView) findViewById(R.id.transcription)).setText("Recording...");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -169,13 +207,10 @@ public class MainActivity extends AppCompatActivity {
     private void stopRecording() {
         if (isRecording) {
             // stop recording
-            mediaRecorder.stop();
-            mediaRecorder.reset();
-            mediaRecorder.release();
             isRecording = false;
             speechRecognizer.stopVoiceStreaming();
-            ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0xFF);
-            ((TextView) findViewById(R.id.transcription)).setText("Stopped recording...");
+            ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
+            ((TextView) findViewById(R.id.transcription)).setText("Stopped");
         }
     }
 }
