@@ -18,12 +18,14 @@
 *.zip
 *.tar.gz
 *.rar
+*.json
 
 hs_err_pid*
 *.json
 
 # android shit
 local.properties
+.idea
 .gradle
 app/build
-.idea
+app/src/main/res/raw
