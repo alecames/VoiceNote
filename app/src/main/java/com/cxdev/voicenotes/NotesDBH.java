@@ -16,11 +16,10 @@ public class NotesDBH extends SQLiteOpenHelper {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_NOTE = "note";
     public static final String COLUMN_TS = "timestamp";
-    public static final String COLUMN_AUDIO = "audio";
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_NOTES_TABLE = "CREATE TABLE " + TABLE_NOTES + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_TITLE + " TEXT," + COLUMN_NOTE + " TEXT," + COLUMN_TS + " TEXT," + COLUMN_AUDIO + " TEXT" + ")";
+        String CREATE_NOTES_TABLE = "CREATE TABLE " + TABLE_NOTES + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_TITLE + " TEXT," + COLUMN_NOTE + " TEXT," + COLUMN_TS  + " TEXT" + ")";
         sqLiteDatabase.execSQL(CREATE_NOTES_TABLE);
     }
 
@@ -40,7 +39,7 @@ public class NotesDBH extends SQLiteOpenHelper {
         values.put(COLUMN_TITLE, note.getTitle());
         values.put(COLUMN_NOTE, note.getNote());
         values.put(COLUMN_TS, note.getTimestamp());
-        values.put(COLUMN_AUDIO, note.getAudio());
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(TABLE_NOTES, null, values);
         db.close();
@@ -49,11 +48,11 @@ public class NotesDBH extends SQLiteOpenHelper {
     // get note
     public Note getNote(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_NOTES, new String[]{COLUMN_ID, COLUMN_TITLE, COLUMN_NOTE, COLUMN_TS, COLUMN_AUDIO}, COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NOTES, new String[]{COLUMN_ID, COLUMN_TITLE, COLUMN_NOTE, COLUMN_TS}, COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         assert cursor != null;
-        Note note = new Note(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        Note note = new Note(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
         return note;
     }
 
@@ -71,7 +70,6 @@ public class NotesDBH extends SQLiteOpenHelper {
         values.put(COLUMN_TITLE, note.getTitle());
         values.put(COLUMN_NOTE, note.getNote());
         values.put(COLUMN_TS, note.getTimestamp());
-        values.put(COLUMN_AUDIO, note.getAudio());
         return db.update(TABLE_NOTES, values, COLUMN_ID + "=?", new String[]{String.valueOf(note.getID())});
     }
 

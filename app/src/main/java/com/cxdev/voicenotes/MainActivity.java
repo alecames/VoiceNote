@@ -1,10 +1,10 @@
 package com.cxdev.voicenotes;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
+import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
@@ -15,44 +15,44 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Locale;
 
-
 public class MainActivity extends AppCompatActivity {
 
-    MediaRecorder mediaRecorder;
-    SpeechRecognizer speechRecognizer;
-    AudioRecord audioRecord;
+    MediaRecorder mediaRecorder = new MediaRecorder();
+    SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+    NotesDBH db = new NotesDBH(MainActivity.this);
     boolean isRecording = false;
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
-    private boolean permissionToRecordGranted = false;
-
-    private static final int SAMPLE_RATE = 44100;
-    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
-    private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT);
 
     @Override
     protected void onStop() {
         super.onStop();
-        speechRecognizer.close();
+        speechRecognizer.stopVoiceStreaming();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setAudioEncodingBitRate(16);
 
-//        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
 
-        try {
-            speechRecognizer = new SpeechRecognizer(this,this);
-        } catch (IOException e) {
-            e.printStackTrace();
+        // check for mic permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        }
+
+        // check for storage permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
         }
 
         // listener for history button
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.leftButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Left", Toast.LENGTH_SHORT).show();
+                cancel();
             }
         });
 
@@ -97,11 +97,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.rightButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isRecording) {
+                    stopRecording();
+                }
                 showTitleDialog(MainActivity.this);
             }
         });
+    }
 
-
+    private void cancel() {
+        stopRecording();
     }
 
     // start timer
@@ -135,28 +140,37 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    // stop timer
+    private void stopTimer() {
+        TextView timer = findViewById(R.id.timer);
+        timer.setTextColor(getResources().getColor(R.color.white));
+    }
+
+    // title window
     private void showTitleDialog(Context context) {
-        // Create a new AlertDialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        // Set the title of the dialog
         builder.setTitle("Enter a Title");
-
-        // Create an EditText view to get user input
         final EditText input = new EditText(context);
-
-        // Set the EditText view as the content of the dialog
         builder.setView(input);
 
-        // Add a button to save the user's input
+        // add button to save the user input
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Get the user's input from the EditText view
                 String title = input.getText().toString();
 
-                // Do something with the user's input
-                // ...
+                // get text from textview
+                TextView textView = findViewById(R.id.transcription);
+                String noteContent = textView.getText().toString();
+                if (!title.isEmpty()) {
+                    db.addNote( new Note(db.getNotesCount(),
+                            title,
+                            noteContent,
+                            Instant.now().toString()));
+                    Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter a title", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -175,32 +189,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    // stop timer
-    private void stopTimer() {
-        TextView timer = findViewById(R.id.timer);
-        timer.setTextColor(getResources().getColor(R.color.white));
-    }
-
-
-    //     get the file name for the recording
-    private String getOutputFileName() {
-        File file = new File(getExternalFilesDir(null), "recordings");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file.getAbsolutePath() + "/" + Instant.now().getEpochSecond() + ".mp3";
-    }
-
     private void startRecording() {
         if (!isRecording) {
+            // start recording
             try {
                 startTimer();
                 isRecording = true;
-                TextView transcription = findViewById(R.id.transcription);
-                transcription.setText(speechRecognizer.recognizeSpeech());
-                ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0x80);
-                System.out.println("Recording started");
+                speechRecognizer.startVoiceStreaming();
+                ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button_recording);
                 ((TextView) findViewById(R.id.transcription)).setText("Recording...");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -210,11 +206,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopRecording() {
         if (isRecording) {
-            stopTimer();
+            // stop recording
             isRecording = false;
-            speechRecognizer.close();
-            ((ImageView) findViewById(R.id.recordButton)).setImageAlpha(0xFF);
-            ((TextView) findViewById(R.id.transcription)).setText("Stopped recording...");
+            speechRecognizer.stopVoiceStreaming();
+            ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
+            ((TextView) findViewById(R.id.transcription)).setText("Stopped");
         }
     }
 }

@@ -21,10 +21,10 @@
 *.json
 
 hs_err_pid*
+*.json
 
 # android shit
 local.properties
-.idea/workspace.xml
 .idea
 .gradle
 app/build
