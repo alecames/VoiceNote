@@ -21,8 +21,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import org.vosk.android.SpeechService;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -30,39 +28,19 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    NotesDBH db = new NotesDBH(MainActivity.this);
     private static final int REQUEST_CODE = 1;
     private SpeechRecognizer speechRecognizer;
+    private TextView transcription;
+    private TextView state;
     private boolean isRecording = false;
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        speechRecognizer.destroy();
-    }
+    NotesDBH db = new NotesDBH(MainActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView transcription = findViewById(R.id.transcription);
-
-        // check for mic permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-        }
-
-        // check for storage permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
-        }
+        transcription = findViewById(R.id.transcription);
+        state = findViewById(R.id.state);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -73,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.history).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // start history activity
                 startActivity(new Intent(MainActivity.this, HistoryActivity.class));
             }
         });
@@ -91,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // listener for settings button
-        findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
@@ -126,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeginningOfSpeech() {
                 transcription.setText("");
-                transcription.setHint("Listening...");
+                state.setHint("Listening...");
             }
 
             @Override
@@ -136,17 +113,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onBufferReceived(byte[] bytes) {
-
             }
 
             @Override
             public void onEndOfSpeech() {
-
+                state.setHint("Processing...");
             }
 
             @Override
             public void onError(int i) {
-
             }
 
             @Override
@@ -164,23 +139,23 @@ public class MainActivity extends AppCompatActivity {
             public void onEvent(int i, Bundle bundle) {
 
             }
+
         });
     }
-    
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE) {
-//            if (resultCode == RESULT_OK && data != null) {
-//                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//                ((TextView) findViewById(R.id.transcription)).setText(Objects.requireNonNull(result).get(0));
-//            }
-//        }
-//    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        speechRecognizer.destroy();
+    }
 
     private void cancel() {
         stopRecording();
         stopTimer();
+        TextView transcription = findViewById(R.id.transcription);
+        TextView state = findViewById(R.id.state);
+        transcription.setText("");
+        state.setHint("Press the button to start recording");
         ((TextView) findViewById(R.id.timer)).setText("00:00");
     }
 
