@@ -9,4 +9,4 @@ To use VoiceNotes app, you will need:
 
 - A compatible Android device
 
-- A microphon
+- A microphone
