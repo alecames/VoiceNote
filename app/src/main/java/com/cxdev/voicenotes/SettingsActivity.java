@@ -3,6 +3,7 @@ package com.cxdev.voicenotes;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -14,12 +15,20 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class SettingsActivity extends AppCompatActivity {
+
+    static NotesDBH db;
+    static AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+        db = new NotesDBH(SettingsActivity.this);
+        builder = new AlertDialog.Builder(SettingsActivity.this);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -56,24 +65,21 @@ public class SettingsActivity extends AppCompatActivity {
             clearDatabase.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    // TODO: make this work
-                    SettingsActivity.deleteAllNotes(getActivity());
+                    SettingsActivity.deleteAllNotes(builder, getContext(), db );
                     return true;
                 }
             });
         }
     }
 
-    public void deleteAllNotes(Context context) {
-        NotesDBH db = new NotesDBH(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public static void deleteAllNotes(AlertDialog.Builder builder, Context context, NotesDBH db) {
         builder.setTitle("Delete all notes?");
         builder.setMessage("Are you sure you want to delete all notes? This action cannot be undone.");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 db.deleteAllNotes();
-                Toast.makeText(SettingsActivity.this, "All notes deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "All notes deleted", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("No!", new DialogInterface.OnClickListener() {
@@ -83,5 +89,4 @@ public class SettingsActivity extends AppCompatActivity {
         });
         builder.create().show();
     }
-
 }

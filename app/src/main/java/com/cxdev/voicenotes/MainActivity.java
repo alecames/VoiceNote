@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         transcription = findViewById(R.id.transcription);
         state = findViewById(R.id.state);
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isRecording) {
                     stopRecording();
                 }
+                state.setText("Saving...");
                 showTitleDialog(MainActivity.this);
             }
         });
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
             public void onReadyForSpeech(Bundle bundle) {
-
+                transcription.setText("Transcription will appear here...");
             }
 
             @Override
@@ -107,13 +109,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRmsChanged(float v) {
-
-            }
+            public void onRmsChanged(float v) {}
 
             @Override
-            public void onBufferReceived(byte[] bytes) {
-            }
+            public void onBufferReceived(byte[] bytes) {}
 
             @Override
             public void onEndOfSpeech() {
@@ -132,13 +131,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPartialResults(Bundle bundle) {
-
+                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                transcription.setText(data.get(0));
             }
 
             @Override
-            public void onEvent(int i, Bundle bundle) {
-
-            }
+            public void onEvent(int i, Bundle bundle) {}
 
         });
     }
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         stopTimer();
         TextView transcription = findViewById(R.id.transcription);
         TextView state = findViewById(R.id.state);
-        transcription.setText("");
+        transcription.setText("Transcription will appear here...");
         state.setHint("Press the button to start recording");
         ((TextView) findViewById(R.id.timer)).setText("00:00");
     }
@@ -259,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
             stopTimer();
             isRecording = false;
             speechRecognizer.stopListening();
+            speechRecognizer.cancel();
             ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
         }
     }
