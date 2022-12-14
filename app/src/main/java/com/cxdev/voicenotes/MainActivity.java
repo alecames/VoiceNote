@@ -1,8 +1,10 @@
 package com.cxdev.voicenotes;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.time.Instant;
 import java.util.List;
@@ -30,7 +34,6 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE = 1;
     private SpeechRecognizer speechRecognizer;
     private TextView transcription, state, timer;
     private boolean isRecording = false;
@@ -55,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         transcription.setTextIsSelectable(true);
         transcription.setFocusable(true);
         transcription.setFocusableInTouchMode(true);
-//        transcription.setMovementMethod(new ScrollingMovementMethod());
 
         init();
         if (savedInstanceState != null) {
@@ -63,13 +65,20 @@ public class MainActivity extends AppCompatActivity {
             state.setText(savedInstanceState.getString("stateText"));
             timer.setText(savedInstanceState.getString("timerText"));
         }
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+                Toast.makeText(getApplicationContext(), "Please allow access to record audio", Toast.LENGTH_SHORT).show();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+            }
+        }
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 100000);
-
 
         // listener for history button
         findViewById(R.id.history).setOnClickListener(new View.OnClickListener() {
