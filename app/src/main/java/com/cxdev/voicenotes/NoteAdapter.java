@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -18,8 +19,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
-    private Context context;
+    private final Context context;
     private Note[] notes;
+    static NotesDBH db;
+    private NoteAdapter noteAdapter;
+
 
     public NoteAdapter(Context context, Note[] notes) {
         this.context = context;
@@ -28,13 +32,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @NonNull
     @Override
-    public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.note_item, parent, false);
+        noteAdapter = new NoteAdapter(context, notes);
         return new NoteViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(NoteViewHolder holder, int position) {
+    public void onBindViewHolder(NoteViewHolder holder, int position) {;
         Note note = notes[position];
         holder.noteTitle.setText(note.getTitle());
         holder.noteContent.setText(note.getNote());
@@ -51,6 +56,20 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         assert date != null;
         String niceDateStr = (String) DateUtils.getRelativeTimeSpanString(date.getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS);
         holder.noteTimestamp.setText(String.valueOf(niceDateStr));
+
+        holder.itemView.setOnLongClickListener(v -> {
+            noteAdapter.popupDialog(holder.getAdapterPosition());
+            return true;
+        });
+    }
+
+    public void popupDialog(int position2) {
+        // make a popup to show the title, content, and timestamp of the note
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(notes[position2].getTitle());
+        builder.setMessage(notes[position2].getNote() + "\n" + notes[position2].getTimestamp());
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     @Override
@@ -66,13 +85,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             noteContent = itemView.findViewById(R.id.noteContent);
             noteTimestamp = itemView.findViewById(R.id.noteTimestamp_tv);
         }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
     }
 
     public void add(Note note) {

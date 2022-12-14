@@ -29,9 +29,9 @@
         android:textColor="?attr/colorOnPrimary"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/rightButton"
-        app:layout_constraintStart_toStartOf="@+id/rightButton"
-        app:layout_constraintTop_toBottomOf="@+id/rightButton" />
+        app:layout_constraintEnd_toEndOf="@+id/saveButton"
+        app:layout_constraintStart_toStartOf="@+id/saveButton"
+        app:layout_constraintTop_toBottomOf="@+id/saveButton" />
 
     <!-- insert the circle.xml drawable here -->
     <ImageView
@@ -55,15 +55,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:scrollbars = "vertical"
         android:background="@drawable/rounded_card"
         android:padding="20dp"
         android:text="@string/sample_transcription"
         android:textAlignment="textStart"
         android:textColor="?attr/colorOnTertiary"
-        app:autoSizeMaxTextSize="20sp"
-        app:autoSizeMinTextSize="10sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/circle"
         app:layout_constraintHorizontal_bias="0.046"
@@ -71,19 +69,20 @@
         app:layout_constraintTop_toBottomOf="@+id/title_text"
         app:layout_constraintVertical_bias="0.0" />
 
+
     <TextView
         android:id="@+id/leftButtonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
+        android:text="@string/clear"
         android:textAllCaps="true"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="16sp"
         android:translationZ="20dp"
         app:layout_constraintBottom_toTopOf="@+id/recordButton"
-        app:layout_constraintEnd_toEndOf="@+id/leftButton"
-        app:layout_constraintStart_toStartOf="@+id/leftButton"
-        app:layout_constraintTop_toTopOf="@+id/leftButton" />
+        app:layout_constraintEnd_toEndOf="@+id/clearButton"
+        app:layout_constraintStart_toStartOf="@+id/clearButton"
+        app:layout_constraintTop_toTopOf="@+id/clearButton" />
 
     <TextView
         android:id="@+id/rightButtonText"
@@ -94,9 +93,9 @@
         android:textColor="?attr/colorOnPrimary"
         android:textSize="16sp"
         android:translationZ="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/rightButton"
-        app:layout_constraintEnd_toEndOf="@+id/rightButton"
-        app:layout_constraintStart_toStartOf="@+id/rightButton"
+        app:layout_constraintBottom_toBottomOf="@+id/saveButton"
+        app:layout_constraintEnd_toEndOf="@+id/saveButton"
+        app:layout_constraintStart_toStartOf="@+id/saveButton"
         app:layout_constraintTop_toBottomOf="@+id/recordButton" />
 
     <ImageView
@@ -114,7 +113,7 @@
 
 
     <Button
-        android:id="@+id/rightButton"
+        android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:background="@drawable/button_right"
@@ -126,7 +125,7 @@
         app:layout_constraintTop_toTopOf="@+id/recordButton" />
 
     <Button
-        android:id="@+id/leftButton"
+        android:id="@+id/clearButton"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:background="@drawable/button_left"
@@ -146,9 +145,9 @@
         android:textAllCaps="true"
         android:textColor="?attr/colorOnTertiary"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/leftButton"
-        app:layout_constraintEnd_toEndOf="@+id/leftButton"
-        app:layout_constraintStart_toStartOf="@+id/leftButton"
+        app:layout_constraintBottom_toTopOf="@+id/clearButton"
+        app:layout_constraintEnd_toEndOf="@+id/clearButton"
+        app:layout_constraintStart_toStartOf="@+id/clearButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

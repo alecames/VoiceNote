@@ -4,24 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class HistoryActivity extends AppCompatActivity {
 
-    private TextView textView;
+    private Context context;
     RecyclerView noteHistory;
     NoteAdapter noteAdapter;
+    NotesDBH db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NotesDBH db = new NotesDBH(this);
+        db = new NotesDBH(this);
         setContentView(R.layout.activity_history);
-
         noteAdapter = new NoteAdapter (this, new Note[0]);
         noteHistory = findViewById(R.id.historyList);
         noteHistory.setAdapter(noteAdapter);
@@ -37,6 +39,10 @@ public class HistoryActivity extends AppCompatActivity {
         });
     }
 
+    public Context getContext() {
+        return context;
+    }
+
     private void updateDB(NotesDBH db) {
         Cursor cursor = db.getAllNotes();
         if (cursor.getCount() == 0) {
@@ -48,7 +54,6 @@ public class HistoryActivity extends AppCompatActivity {
                         cursor.getString(1),
                         cursor.getString(2),
                         cursor.getString(3)
-
                 );
                 noteAdapter.add(note);
             }

@@ -74,9 +74,9 @@ public class NotesDBH extends SQLiteOpenHelper {
     }
 
     // delete note
-    public void deleteNote(Note note) {
+    public void deleteNote(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NOTES, COLUMN_ID + "=?", new String[]{String.valueOf(note.getID())});
+        db.delete(TABLE_NOTES, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -92,8 +92,8 @@ public class NotesDBH extends SQLiteOpenHelper {
     // delete all notes
     public void deleteAllNotes() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NOTES);
-        db.close();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
+        onCreate(db);
     }
 
     // filter notes

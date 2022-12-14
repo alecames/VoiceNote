@@ -2,7 +2,7 @@
     <string name="app_name">VoiceNotes</string>
     <string name="sample_transcription">Transcription will appear here...</string>
     <string name="history">History</string>
-    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
     <string name="translate">Save</string>
     <string name="_00_00">00:00</string>
     <string name="note_content_placeholder">Note content…</string>

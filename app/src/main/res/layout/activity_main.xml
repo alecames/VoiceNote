@@ -61,6 +61,7 @@
 
     <TextView
         android:id="@+id/transcription"
+        android:scrollbars = "vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="10dp"
@@ -81,14 +82,14 @@
         android:id="@+id/leftButtonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
+        android:text="@string/clear"
         android:textAllCaps="true"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/leftButton"
+        app:layout_constraintBottom_toBottomOf="@+id/clearButton"
         app:layout_constraintEnd_toStartOf="@+id/recordButton"
-        app:layout_constraintStart_toStartOf="@+id/leftButton"
-        app:layout_constraintTop_toTopOf="@+id/leftButton"
+        app:layout_constraintStart_toStartOf="@+id/clearButton"
+        app:layout_constraintTop_toTopOf="@+id/clearButton"
         android:translationZ="20dp"
         />
 
@@ -101,10 +102,10 @@
         android:textSize="16sp"
         android:translationZ="20dp"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="@+id/rightButton"
-        app:layout_constraintEnd_toEndOf="@+id/rightButton"
+        app:layout_constraintBottom_toBottomOf="@+id/saveButton"
+        app:layout_constraintEnd_toEndOf="@+id/saveButton"
         app:layout_constraintStart_toEndOf="@+id/recordButton"
-        app:layout_constraintTop_toTopOf="@+id/rightButton" />
+        app:layout_constraintTop_toTopOf="@+id/saveButton" />
 
     <ImageView
         android:id="@+id/recordButton"
@@ -121,7 +122,7 @@
 
 
     <Button
-        android:id="@+id/rightButton"
+        android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:background="@drawable/button_right"
@@ -132,7 +133,7 @@
         app:layout_constraintTop_toTopOf="@+id/recordButton" />
 
     <Button
-        android:id="@+id/leftButton"
+        android:id="@+id/clearButton"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:background="@drawable/button_left"

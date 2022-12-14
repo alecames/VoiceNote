@@ -1,15 +1,13 @@
 package com.cxdev.voicenotes;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,23 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1;
     private SpeechRecognizer speechRecognizer;
-    private TextView transcription;
-    private TextView state;
+    private TextView transcription, state, timer;
     private boolean isRecording = false;
     NotesDBH db = new NotesDBH(MainActivity.this);
 
@@ -41,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("transcriptionText", transcription.getText().toString());
-        outState.putString("stateText", transcription.getText().toString());
+        outState.putString("stateText", state.getText().toString());
+        outState.putString("timerText", timer.getText().toString());
     }
 
     @Override
@@ -50,9 +43,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         transcription = findViewById(R.id.transcription);
         state = findViewById(R.id.state);
+        timer = findViewById(R.id.timer);
+        clear();
+        transcription.setMovementMethod(new ScrollingMovementMethod());
+
         if (savedInstanceState != null) {
             transcription.setText(savedInstanceState.getString("transcriptionText"));
             state.setText(savedInstanceState.getString("stateText"));
+            timer.setText(savedInstanceState.getString("timerText"));
         }
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
@@ -90,16 +88,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // listener for left button
-        findViewById(R.id.leftButton).setOnClickListener(new View.OnClickListener() {
+        // listener for clear button
+        findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancel();
+                clear();
             }
         });
 
-        // listener for right button
-        findViewById(R.id.rightButton).setOnClickListener(new View.OnClickListener() {
+        // listener for save button
+        findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isRecording) {
@@ -167,13 +165,13 @@ public class MainActivity extends AppCompatActivity {
         speechRecognizer.destroy();
     }
 
-    private void cancel() {
+    private void clear() {
         stopRecording();
         stopTimer();
         TextView transcription = findViewById(R.id.transcription);
         TextView state = findViewById(R.id.state);
         transcription.setText("Transcription will appear here...");
-        state.setHint("Press the button to start recording");
+        state.setText("Press the button to start recording");
         ((TextView) findViewById(R.id.timer)).setText("00:00");
     }
 
@@ -221,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
         final EditText input = new EditText(context);
         builder.setView(input);
 
-        // add button to save the user input
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -231,18 +228,16 @@ public class MainActivity extends AppCompatActivity {
                 TextView textView = findViewById(R.id.transcription);
                 String noteContent = textView.getText().toString();
                 if (!title.isEmpty()) {
-                    db.addNote( new Note(db.getNotesCount(),
-                            title,
-                            noteContent,
-                            Instant.now().toString()));
-                    Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Please enter a title", Toast.LENGTH_SHORT).show();
+                    title = "Untitled " + db.getNotesCount();
                 }
+                db.addNote( new Note(db.getNotesCount(),
+                        title,
+                        noteContent,
+                        Instant.now().toString()));
+                Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Add a button to cancel the dialog
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -251,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Create and show the dialog
         AlertDialog dialog = builder.create();
         dialog.show();
 
