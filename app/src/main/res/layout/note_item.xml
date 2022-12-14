@@ -47,6 +47,7 @@
             android:text="@string/note_content_placeholder"
             android:textSize="20sp"
             android:textAlignment="textStart"
+            android:textIsSelectable="true"
             android:textColor="?attr/colorOnTertiary"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

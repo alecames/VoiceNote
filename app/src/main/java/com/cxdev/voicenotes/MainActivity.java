@@ -22,6 +22,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 
+// Alec Ames
+// 6843577
+// Alex Duclos
+// 6738884
+// 12/14/2022
+
+
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1;
     private SpeechRecognizer speechRecognizer;
@@ -44,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         transcription = findViewById(R.id.transcription);
         state = findViewById(R.id.state);
         timer = findViewById(R.id.timer);
-        clear();
+        init();
         transcription.setMovementMethod(new ScrollingMovementMethod());
 
         if (savedInstanceState != null) {
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!isRecording) {
+                    state.setText("Ready...");
                     startRecording(speechRecognizerIntent);
                 } else {
                     stopRecording();
@@ -92,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clear();
+                init();
             }
         });
 
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onBeginningOfSpeech() {
-                state.setHint("Listening...");
+                state.setText("Listening...");
             }
 
             @Override
@@ -127,26 +135,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onEndOfSpeech() {
-                state.setHint("Waiting...");
+                state.setText("Ready...");
             }
 
             @Override
-            public void onError(int i) {
-            }
+            public void onError(int i) {}
 
             @Override
-            public void onResults(Bundle results) {
-            }
+            public void onResults(Bundle results) {}
 
             @Override
             public void onPartialResults(Bundle bundle) {
-                // Get the recognition results
                 List<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                // Append the results to the TextView
                 for (String result : data) {
-                    // clear leading and trailing whitespace
                     result = result.trim();
-                    // make the first letter uppercase
                     result = result.substring(0, 1).toUpperCase() + result.substring(1);
                     if (!result.isEmpty()) {
                         transcription.append(result);
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         speechRecognizer.destroy();
     }
 
-    private void clear() {
+    private void init() {
         stopRecording();
         stopTimer();
         TextView transcription = findViewById(R.id.transcription);
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 // get text from textview
                 TextView textView = findViewById(R.id.transcription);
                 String noteContent = textView.getText().toString();
-                if (!title.isEmpty()) {
+                if (title.isEmpty()) {
                     title = "Untitled " + db.getNotesCount();
                 }
                 db.addNote( new Note(db.getNotesCount(),
@@ -243,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 // Cancel the dialog
                 dialog.cancel();
+                state.setText("Ready...");
             }
         });
 
