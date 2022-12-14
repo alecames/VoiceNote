@@ -7,43 +7,52 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import java.io.File;
+import org.vosk.android.SpeechService;
+
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    MediaRecorder mediaRecorder = new MediaRecorder();
-    SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+
     NotesDBH db = new NotesDBH(MainActivity.this);
-    boolean isRecording = false;
+    private static final int REQUEST_CODE = 1;
+    private SpeechRecognizer speechRecognizer;
+    private boolean isRecording = false;
 
     @Override
     protected void onStop() {
         super.onStop();
-        speechRecognizer.stopVoiceStreaming();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        speechRecognizer.destroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioEncodingBitRate(16);
-
+        TextView transcription = findViewById(R.id.transcription);
 
         // check for mic permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -54,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
         }
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
         // listener for history button
         findViewById(R.id.history).setOnClickListener(new View.OnClickListener() {
@@ -68,9 +82,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.recordButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // check if recording
                 if (!isRecording) {
-                    startRecording();
+                    startRecording(speechRecognizerIntent);
                 } else {
                     stopRecording();
                 }
@@ -103,7 +116,67 @@ public class MainActivity extends AppCompatActivity {
                 showTitleDialog(MainActivity.this);
             }
         });
+
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                transcription.setText("");
+                transcription.setHint("Listening...");
+            }
+
+            @Override
+            public void onRmsChanged(float v) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] bytes) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+
+            }
+
+            @Override
+            public void onError(int i) {
+
+            }
+
+            @Override
+            public void onResults(Bundle bundle) {
+                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                transcription.setText(data.get(0));
+            }
+
+            @Override
+            public void onPartialResults(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onEvent(int i, Bundle bundle) {
+
+            }
+        });
     }
+    
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CODE) {
+//            if (resultCode == RESULT_OK && data != null) {
+//                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+//                ((TextView) findViewById(R.id.transcription)).setText(Objects.requireNonNull(result).get(0));
+//            }
+//        }
+//    }
 
     private void cancel() {
         stopRecording();
@@ -191,29 +264,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startRecording() {
+    // start recording
+    private void startRecording(Intent speechRecognizerIntent) {
         if (!isRecording) {
-            // start recording
             try {
                 startTimer();
                 isRecording = true;
-                speechRecognizer.startVoiceStreaming();
+                speechRecognizer.startListening(speechRecognizerIntent);
                 ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button_recording);
-                ((TextView) findViewById(R.id.transcription)).setText("Recording...");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    // stop recording
     private void stopRecording() {
         if (isRecording) {
-            // stop recording
             stopTimer();
             isRecording = false;
-            speechRecognizer.stopVoiceStreaming();
+            speechRecognizer.stopListening();
             ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
-            ((TextView) findViewById(R.id.transcription)).setText("Stopped");
         }
     }
 }
