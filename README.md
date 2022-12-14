@@ -9,6 +9,4 @@ To use VoiceNotes app, you will need:
 
 - A compatible Android device
 
-- A microphone
-
-- $74.99 Donation
+- A microphon
