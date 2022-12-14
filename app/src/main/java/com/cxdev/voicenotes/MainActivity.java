@@ -51,9 +51,13 @@ public class MainActivity extends AppCompatActivity {
         transcription = findViewById(R.id.transcription);
         state = findViewById(R.id.state);
         timer = findViewById(R.id.timer);
-        init();
-        transcription.setMovementMethod(new ScrollingMovementMethod());
 
+        transcription.setTextIsSelectable(true);
+        transcription.setFocusable(true);
+        transcription.setFocusableInTouchMode(true);
+//        transcription.setMovementMethod(new ScrollingMovementMethod());
+
+        init();
         if (savedInstanceState != null) {
             transcription.setText(savedInstanceState.getString("transcriptionText"));
             state.setText(savedInstanceState.getString("stateText"));
@@ -146,15 +150,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPartialResults(Bundle bundle) {
-                List<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                for (String result : data) {
-                    result = result.trim();
-                    result = result.substring(0, 1).toUpperCase() + result.substring(1);
-                    if (!result.isEmpty()) {
-                        transcription.append(result);
-                        transcription.append("\n");
+                if (bundle != null) {
+                    List<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                    for (String result : data) {
+                        result = result.trim();
+                        result = result.substring(0, 1).toUpperCase() + result.substring(1);
+                        if (!result.isEmpty()) {
+                            transcription.append(result);
+                            transcription.append("\n");
+                        }
                     }
                 }
+
             }
             @Override
             public void onEvent(int i, Bundle bundle) {}
