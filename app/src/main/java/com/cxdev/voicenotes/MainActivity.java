@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -36,17 +38,29 @@ public class MainActivity extends AppCompatActivity {
     NotesDBH db = new NotesDBH(MainActivity.this);
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("transcriptionText", transcription.getText().toString());
+        outState.putString("stateText", transcription.getText().toString());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         transcription = findViewById(R.id.transcription);
         state = findViewById(R.id.state);
-
+        if (savedInstanceState != null) {
+            transcription.setText(savedInstanceState.getString("transcriptionText"));
+            state.setText(savedInstanceState.getString("stateText"));
+        }
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 100000);
+
 
         // listener for history button
         findViewById(R.id.history).setOnClickListener(new View.OnClickListener() {
@@ -99,12 +113,11 @@ public class MainActivity extends AppCompatActivity {
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
             public void onReadyForSpeech(Bundle bundle) {
-                transcription.setText("Transcription will appear here...");
+                transcription.setText("");
             }
 
             @Override
             public void onBeginningOfSpeech() {
-                transcription.setText("");
                 state.setHint("Listening...");
             }
 
@@ -116,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onEndOfSpeech() {
-                state.setHint("Processing...");
+                state.setHint("Waiting...");
             }
 
             @Override
@@ -124,20 +137,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResults(Bundle bundle) {
-                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                transcription.setText(data.get(0));
+            public void onResults(Bundle results) {
             }
 
             @Override
             public void onPartialResults(Bundle bundle) {
-                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                transcription.setText(data.get(0));
+                // Get the recognition results
+                List<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                // Append the results to the TextView
+                for (String result : data) {
+                    // clear leading and trailing whitespace
+                    result = result.trim();
+                    // make the first letter uppercase
+                    result = result.substring(0, 1).toUpperCase() + result.substring(1);
+                    if (!result.isEmpty()) {
+                        transcription.append(result);
+                        transcription.append("\n");
+                    }
+                }
             }
-
             @Override
             public void onEvent(int i, Bundle bundle) {}
-
         });
     }
 
@@ -244,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 startTimer();
                 isRecording = true;
                 speechRecognizer.startListening(speechRecognizerIntent);
+                transcription.setText("");
                 ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button_recording);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -256,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         if (isRecording) {
             stopTimer();
             isRecording = false;
+            state.setText("Stopped");
             speechRecognizer.stopListening();
             speechRecognizer.cancel();
             ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
