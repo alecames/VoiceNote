@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void cancel() {
         stopRecording();
+        stopTimer();
+        ((TextView) findViewById(R.id.timer)).setText("00:00");
     }
 
     // start timer
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
     private void stopRecording() {
         if (isRecording) {
             // stop recording
+            stopTimer();
             isRecording = false;
             speechRecognizer.stopVoiceStreaming();
             ((ImageView) findViewById(R.id.recordButton)).setImageResource(R.drawable.record_button);
