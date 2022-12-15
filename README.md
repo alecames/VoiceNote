@@ -6,6 +6,10 @@ This application will transcribe speech to text using the Google Speech Recogniz
 
 Install the `VoiceNote.apk` package located in the Releases section.
 
+Or download from the Google Play store
+
+<a href='https://play.google.com/store/apps/details?id=com.cxdev.voicenotes&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width='196px'/></a>
+
 ## Usage
 
 Upon opening the app, it will ask for microphone permissions. Allow this for the app to function properly.
