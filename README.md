@@ -1,4 +1,4 @@
-# VoiceNote
+# VoiceNote <a href="https://github.com/alecames/VoiceNote/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/alecames/VoiceNote?display_name=tag&style=flat-square"></a>
 
 This application will transcribe speech to text using the Google Speech Recognizer API.
 
